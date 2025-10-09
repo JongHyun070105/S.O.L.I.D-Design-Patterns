@@ -18,7 +18,7 @@
 
 ## 클래스 다이어그램
 
-![img](/img/factory.png)
+![img](/img/prototype.png)
 
 ## 코드
 
