@@ -15,34 +15,71 @@
 
 <br>
 
+## 클래스 다이어그램
+
+![img](/img/builder.png)
+
+## 코드
 ```py
+from abc import ABC, abstractmethods
+
 class Player:
-  def __init__(self):
-    self.name = None
-    self.position = None
+    def __init__(self):
+        self.name = None
+        self.position = None
 
-  def info(self):
-    print(f"{self.name}의 포지션은 {self.position}")
+    def info(self):
+        print(f"{self.name}의 포지션은 {self.position}")
 
-class PlayerBuilder:
-  def __init__(self):
-    self.player = Player()
+class Builder(ABC):
+    @abstractmethod
+    def reset(self): pass
 
-  def set_name(self,name):
-    self.player.name = name
-    return self
+    @abstractmethod
+    def set_name(self, name): pass
 
-  def set_position(self, position):
-    self.player.position = position
-    return self
+    @abstractmethod
+    def set_position(self, position): pass
 
-  def get_player(self):
-    return self.player
+    @abstractmethod
+    def get_player(self): pass
 
-player = PlayerBuilder()
-pitcher = player.set_name("김민수").set_position("투수").get_player()
+class PlayerBuilder(Builder):
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self._player = Player()
+
+    def set_name(self, name):
+        self._player.name = name
+        return self
+
+    def set_position(self, position):
+        self._player.position = position
+        return self
+
+    def get_player(self):
+        product = self._player
+        self.reset()
+        return product
+
+class Director:
+    def __init__(self, builder: Builder):
+        self.builder = builder
+
+    def construct_pitcher(self):
+        return self.builder.set_name("김민수").set_position("투수").get_player()
+
+    def construct_batter(self):
+        return self.builder.set_name("김철수").set_position("유격수").get_player()
+
+builder = PlayerBuilder()
+director = Director(builder)
+
+pitcher = director.construct_pitcher()
 pitcher.info()
 
-batter = player.set_name("김철수").set_position("유격수").get_player()
+batter = director.construct_batter()
 batter.info()
 ```

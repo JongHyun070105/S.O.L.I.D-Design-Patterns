@@ -15,6 +15,12 @@
 
 <br>
 
+## 클래스 다이어그램
+
+![img](/img/abstract_factory.png)
+
+## 코드
+
 ```py
 class Weapon:
   def display(self):

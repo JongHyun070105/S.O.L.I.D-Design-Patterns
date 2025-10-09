@@ -16,6 +16,31 @@
 
 <br>
 
+## 클래스 다이어그램
+
+![img](/img/factory.png)
+
+## 코드
+
 ```py
-코드 만들어야됨
+class DB:
+  _instance = None
+
+  def __new__(cls):
+    if not cls._instance:
+      print("DB를 생성합니다.")
+      cls._instance = super(DB, cls).__new__(cls)
+      cls._instance.connection = 'DB 연결중'
+    return cls._instance
+
+db1 = DB()
+db2 = DB()
+
+print(db1.connection)
+print(db2.connection)
+
+if db1 == db2:
+  print("기존 DB에 연결되었습니다.")
+else:
+  print("다른 DB에 연결되었습니다.")
 ```
