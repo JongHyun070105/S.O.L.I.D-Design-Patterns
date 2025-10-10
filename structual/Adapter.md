@@ -15,41 +15,84 @@
 
 <br>
 
+## 클래스 다이어그램
+
+![img](/img/adapter.png)
+
+## 코드
+
 ```py
 from abc import ABC, abstractmethod
 
 class SendMessage(ABC):
-  def send_message(self, sender: str, receiver: str,message: str):
+  @abstractmethod
+  def send(self, message: str):
     pass
 
+
 class SMS(SendMessage):
-  def send_message(self, sender:str, receiver:str,message: str):
-     print(f"{sender}가 {receiver}에게 SMS로 '{message}'를 발송함")
+  def __init__(self, phone_number: str):
+    self.phone_number = phone_number
 
-class Email:
-  def send_another(self, sender:str, receiver:str,message: str):
-      print(f"{sender}가 {receiver}에게 이메일로 '{message}'를 발송함")
+  def send(self, message: str):
+    print(f"{self.phone_number}로 '{message}'를 보냈습니다.")
 
-class KakaoTalk:
-  def send_another(self, sender:str, receiver:str,message: str):
-      print(f"{sender}가 {receiver}에게 카카오톡으로 '{message}'를 발송함")
+
+class EmailService:
+  def __init__(self, sender_email: str, password: str):
+    self.sender_email = sender_email
+    self.password = password
+
+  def send_email(self, receiver_email: str, message: str):
+    print(f"{self.sender_email}가 {receiver_email}에게 이메일로 '{message}'를 보냈습니다.")
+
+
+class KakaoTalkService:
+  def __init__(self, user_id: str, password: str):
+    self.user_id = user_id
+    self.password = password
+
+  def send_kakao(self, friend_id: str, message: str):
+    print(f"{self.user_id}가 {friend_id}에게 카카오톡으로 '{message}'를 보냈습니다.")
+
+
+class LineService:
+  def __init__(self, user_id: str, password: str):
+    self.user_id = user_id
+    self.password = password
+
+  def send_line(self, friend_id: str, message: str):
+    print(f"{self.user_id}가 {friend_id}에게 라인으로 '{message}'를 보냈습니다.")
+
 
 class MessageAdapter(SendMessage):
-  def __init__(self, messageType):
-    self.messageType = messageType
+  def __init__(self, service, receiver: str):
+    self.service = service
+    self.receiver = receiver
 
-  def send_message(self, sender: str, receiver: str, message: str):
-    self.messageType.send_another(sender, receiver, message)
+  def send(self, message: str):
+    if isinstance(self.service, EmailService):
+      self.service.send_email(self.receiver, message)
+    elif isinstance(self.service, KakaoTalkService):
+      self.service.send_kakao(self.receiver, message)
+    elif isinstance(self.service, LineService):
+      self.service.send_line(self.receiver, message)
+    else:
+      raise TypeError("지원되지 않는 메시지 서비스입니다.")
 
-sms = SMS()
-kakao = KakaoTalk()
-mail = Email()
 
-sms.send_message("A", "B", "sms")
+sms = SMS("010-1234-5678")
+sms.send("문자 메시지 테스트")
 
-kakaotalk = MessageAdapter(kakao)
-kakaotalk.send_message("A", "B", "카톡")
+email = EmailService("user@example.com", "pw1234")
+email_adapter = MessageAdapter(email, "friend@example.com")
+email_adapter.send("메일 테스트")
 
-email = MessageAdapter(mail)
-email.send_message("A", "B", "메일")
+kakao = KakaoTalkService("user123", "pw4567")
+kakao_adapter = MessageAdapter(kakao, "friendABC")
+kakao_adapter.send("카톡 테스트")
+
+line = LineService("user987", "pw7890")
+line_adapter = MessageAdapter(line, "friendXYZ")
+line_adapter.send("라인 테스트")
 ```
