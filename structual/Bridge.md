@@ -15,36 +15,55 @@
 
 <br>
 
+## 클래스 다이어그램
+
+![img](/img/bridge.png)
+
+## 코드
+
 ```py
-class Player:
-  def play_style(self):
+from abc import ABC, abstractmethod
+
+class Player(ABC):
+  @abstractmethod
+  def play_style(self, style_input):
     pass
+
 
 class Batter(Player):
   def play_style(self, style_input):
-    print(f'{style_input}타자')
+    print(f"{style_input} 타자 스타일")
+
 
 class Pitcher(Player):
   def play_style(self, style_input):
-    print(f'{style_input}투수')
+    print(f"{style_input} 투수 스타일")
+
 
 class PlayerControl:
   def __init__(self, player: Player):
     self.player = player
 
-  def choose_style(self, style_input):
+  def show_style(self, style_input):
     self.player.play_style(style_input)
 
-class PlayerStyle(PlayerControl):
-  def strategy(self, strategy_input):
-    print(f'{strategy_input} 선택')
 
-batter = PlayerStyle(Batter())
-batter.choose_style("밸런스")
-batter.strategy("공격")
+class PlayerMode(PlayerControl):
+  def __init__(self, player: Player, mode: str):
+    super().__init__(player)
+    self.mode = mode
+
+  def activate_mode(self):
+    print(f"{self.mode} 모드가 활성화되었습니다.")
+
+
+batter = PlayerMode(Batter(), "공격")
+batter.activate_mode()
+batter.show_style("밸런스")
 
 print("")
 
-pitcher = PlayerControl(Pitcher())
-pitcher.choose_style("강속구")
+pitcher = PlayerMode(Pitcher(), "수비")
+pitcher.activate_mode()
+pitcher.show_style("강속구")
 ```
