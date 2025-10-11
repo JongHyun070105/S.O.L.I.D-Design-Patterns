@@ -15,41 +15,61 @@
 
 <br>
 
+## 클래스 다이어그램
+
+![img](/img/proxy.png)
+
+## 코드
+
 ```py
+import time
+import random
 from abc import ABC, abstractmethod
 
-class SendMessage(ABC):
-  def send_message(self, sender: str, receiver: str,message: str):
-    pass
+class ServiceInterface(ABC):
+    @abstractmethod
+    def fetch_data(self, endpoint):
+        pass
 
-class SMS(SendMessage):
-  def send_message(self, sender:str, receiver:str,message: str):
-     print(f"{sender}가 {receiver}에게 SMS로 '{message}'를 발송함")
+class APIService(ServiceInterface):
+    def fetch_data(self, endpoint):
+        print(f"API 호출: {endpoint}")
+        if random.random() < 0.3:
+            raise Exception("API 요청 실패!")
+        return f"데이터 from {endpoint}"
 
-class Email:
-  def send_another(self, sender:str, receiver:str,message: str):
-      print(f"{sender}가 {receiver}에게 이메일로 '{message}'를 발송함")
 
-class KakaoTalk:
-  def send_another(self, sender:str, receiver:str,message: str):
-      print(f"{sender}가 {receiver}에게 카카오톡으로 '{message}'를 발송함")
+class APIServiceProxy(ServiceInterface):
+    def __init__(self, real_service, retry=3, rate_limit=2):
+        self._real_service = real_service
+        self._retry = retry
+        self._rate_limit = rate_limit
+        self._last_call = 0
 
-class MessageAdapter(SendMessage):
-  def __init__(self, messageType):
-    self.messageType = messageType
+    def fetch_data(self, endpoint):
+        current_time = time.time()
+        if current_time - self._last_call < self._rate_limit:
+            wait_time = self._rate_limit - (current_time - self._last_call)
+            print(f"호출 제한: {wait_time:.1f}초 대기")
+            time.sleep(wait_time)
+        self._last_call = time.time()
 
-  def send_message(self, sender: str, receiver: str, message: str):
-    self.messageType.send_another(sender, receiver, message)
+        for attempt in range(1, self._retry + 1):
+            try:
+                print(f"[시도 {attempt}] Proxy가 APIService에 요청 위임...")
+                result = self._real_service.fetch_data(endpoint)
+                print("API 호출 성공!")
+                return result
+            except Exception as e:
+                print(f"실패: {e}")
+                if attempt == self._retry:
+                    print("모든 재시도 실패!")
+                    return None
+                print("재시도 중...")
 
-sms = SMS()
-kakao = KakaoTalk()
-mail = Email()
+real_service = APIService()
+proxy = APIServiceProxy(real_service)
 
-sms.send_message("A", "B", "sms")
-
-kakaotalk = MessageAdapter(kakao)
-kakaotalk.send_message("A", "B", "카톡")
-
-email = MessageAdapter(mail)
-email.send_message("A", "B", "메일")
+print(proxy.fetch_data("/users"))
+print(proxy.fetch_data("/posts"))
 ```
