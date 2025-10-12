@@ -4,18 +4,29 @@
 
 ## 장점
 
--
+- 상태에 따른 행동을 개별 클래스로 분리하여 관리가 용이함
+- 새로운 상태를 추가해도 기존 코드 수정이 최소화됨 -> OCP 준수
+- 각 상태가 독립적이므로 SRP 준수
+- 복잡한 조건문을 제거하여 코드 가독성 향상
 
 ## 단점
 
--
+- 상태가 적을 경우 오히려 코드가 복잡해질 수 있음
+- 상태 클래스가 많아지면 클래스 수가 증가함
+- 상태 전환 로직이 여러 클래스에 분산될 수 있어 전체 흐름 파악이 어려울 수 있음
 
 <br>
+
+## 클래스 다이어그램
+
+![img](/img/state.png)
+
+## 코드
 
 ```py
 class Door:
     def __init__(self):
-        self.state = ClosedState()  # 초기 상태
+        self.state = ClosedState()
 
     def setState(self, state):
         self.state = state
