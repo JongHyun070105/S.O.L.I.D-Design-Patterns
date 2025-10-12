@@ -4,23 +4,33 @@
 
 ## 장점
 
-- 
+- 런타임에 알고리즘을 동적으로 변경할 수 있음
+- 알고리즘을 독립적으로 관리하고 테스트할 수 있음
+- 복잡한 조건문을 제거하여 코드 가독성 향상
+- 새로운 전략을 추가해도 기존 코드 수정이 불필요함 -> OCP 준수
 
 ## 단점
 
-- 
+- 전략 클래스가 많아지면 관리해야 할 객체 수가 증가함
+- 클라이언트가 적절한 전략을 선택하기 위해 전략들의 차이를 알아야 함
+- 간단한 알고리즘의 경우 오히려 코드가 복잡해질 수 있음
 
 <br>
+
+## 클래스 다이어그램
+
+![img](/img/strategy.png)
+
+## 코드
 
 ```py
 from abc import ABC, abstractmethod
 
-class Compression(ABC): # 추상 전략
+class Compression(ABC):
   @abstractmethod
   def compress(self, filename):
     pass
 
-# 압축확장자 3개 클래스 - 구체 전략
 class Zip(Compression):
   def compress(self, filename):
     print(f'{filename}.zip 으로 압축했습니다.')
@@ -33,22 +43,19 @@ class Tar(Compression):
   def compress(self, filename):
     print(f'{filename}.tar로 압축했습니다.')
 
-# Context - 전략 보관 및 실행 & 교체 가능
 class FileCompressor:
-  def __init__(self, strategy: Compression): # 확장자 클래스를 받음
+  def __init__(self, strategy: Compression):
       self.strategy = strategy
 
-  def setStrategy(self, strategy: Compression): # set을 통해 확장자 변경도 가능
+  def setStrategy(self, strategy: Compression):
       self.strategy = strategy
 
-  def compress(self, filename): # 출력
+  def compress(self, filename):
       self.strategy.compress(filename)
 
-# 사용예시
 input_ext = input("압축 방식을 입력해주세요 (zip/rar/tar): ")
 filename = input("파일명을 입력해주세요: ")
 
-# 확장자에 따라 실행
 if input_ext == "zip":
     strategy = Zip()
 elif input_ext == "rar":
