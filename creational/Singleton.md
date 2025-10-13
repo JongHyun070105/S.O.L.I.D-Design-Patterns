@@ -33,7 +33,7 @@ class DB:
   def __new__(cls):
     if not cls._instance:
       print("DB를 생성합니다.")
-      cls._instance = super(DB, cls).__new__(cls)ㅈ
+      cls._instance = super(DB, cls).__new__(cls)
       cls._instance.connection = 'DB 연결중'
     return cls._instance
 
