@@ -19,7 +19,7 @@
 
 ![img](/img/facade.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 import time
@@ -74,4 +74,74 @@ home = HomeFacade()
 
 
 home.come()
+```
+
+## 다트 코드
+
+```dart
+import 'dart:io';
+
+class Light {
+  void on() {
+    print("조명 ON");
+  }
+
+  void off() {
+    print("조명 OFF");
+  }
+}
+
+class TV {
+  void on() {
+    print("TV ON");
+  }
+
+  void off() {
+    print("TV OFF");
+  }
+}
+
+class AC {
+  void on() {
+    print("에어컨 ON");
+  }
+
+  void off() {
+    print("에어컨 OFF");
+  }
+}
+
+class HomeFacade {
+  Light light = Light();
+  TV tv = TV();
+  AC ac = AC();
+
+  void come() {
+    print("집에 들어왔을 때");
+
+    sleep(Duration(seconds: 1));
+
+    light.on();
+    tv.on();
+    ac.on();
+
+    print("");
+
+    sleep(Duration(seconds: 3));
+
+    print("외출 했을 때");
+
+    sleep(Duration(seconds: 1));
+
+    light.off();
+    tv.off();
+    ac.off();
+  }
+}
+
+void main(List<String> args) {
+  final home = HomeFacade();
+
+  home.come();
+}
 ```
