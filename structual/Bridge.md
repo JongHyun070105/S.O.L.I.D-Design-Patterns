@@ -19,7 +19,7 @@
 
 ![img](/img/bridge.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 from abc import ABC, abstractmethod
@@ -66,4 +66,57 @@ print("")
 pitcher = PlayerMode(Pitcher(), "수비")
 pitcher.activate_mode()
 pitcher.show_style("강속구")
+```
+
+## 다트 코드
+
+```dart
+abstract class Player {
+  void playStyle(String styleInput);
+}
+
+class Batter implements Player {
+  @override
+  void playStyle(String styleInput) {
+    print("$styleInput 타자 스타일");
+  }
+}
+
+class Pitcher implements Player {
+  @override
+  void playStyle(String styleInput) {
+    print("$styleInput 투수 스타일");
+  }
+}
+
+abstract class PlayerControl {
+  Player player;
+
+  PlayerControl(this.player);
+
+  void showStyle(String styleInput) {
+    player.playStyle(styleInput);
+  }
+}
+
+class PlayerMode extends PlayerControl {
+  String? mode;
+  PlayerMode(super.player, this.mode);
+
+  void activate_mode() {
+    print('$mode 모드가 활성화 되었습니다');
+  }
+}
+
+void main(List<String> args) {
+  final batter = PlayerMode(Batter(), "공격");
+  batter.activate_mode();
+  batter.showStyle("밸런스");
+
+  print("");
+
+  final pticher = PlayerMode(Pitcher(), "수비");
+  pticher.activate_mode();
+  pticher.showStyle("강속구");
+}
 ```
