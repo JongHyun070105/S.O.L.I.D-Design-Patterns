@@ -20,7 +20,7 @@
 
 ![img](/img/decorator.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 class Player:
@@ -83,4 +83,102 @@ makeMyPlayer(catcher)
 
 catcher = PelvicFloorGuard(catcher)
 makeMyPlayer(catcher)
+```
+
+## 다트 코드
+
+```dart
+import 'dart:io';
+
+abstract class Player {
+  void wear();
+}
+
+class Batter extends Player {
+  @override
+  void wear() {
+    stdout.write("착용중인 장비: 야구 방망이, 헬멧");
+  }
+}
+
+class Catcher extends Player {
+  @override
+  void wear() {
+    stdout.write("착용중인 장비: 포수 마스크");
+  }
+}
+
+class PlayerDecorator implements Player {
+  Player player;
+
+  PlayerDecorator(this.player);
+
+  @override
+  void wear() {
+    player.wear();
+  }
+}
+
+class ElbowGuard extends PlayerDecorator {
+  ElbowGuard(super.player);
+
+  @override
+  void wear() {
+    player.wear();
+    stdout.write(", 팔꿈치 보호대");
+  }
+}
+
+class KneeGuard extends PlayerDecorator {
+  KneeGuard(super.player);
+
+  @override
+  void wear() {
+    player.wear();
+    stdout.write(", 무릎 보호대");
+  }
+}
+
+class AnkleGuard extends PlayerDecorator {
+  AnkleGuard(super.player);
+
+  @override
+  void wear() {
+    player.wear();
+    stdout.write(", 다리 보호대");
+  }
+}
+
+class PelvicFloorGuard extends PlayerDecorator {
+  PelvicFloorGuard(super.player);
+
+  @override
+  void wear() {
+    player.wear();
+    stdout.write(", 낭심 보호대");
+  }
+}
+
+void makeMyPlayer(Player player) {
+  player.wear();
+  print("");
+}
+
+void main(List<String> args) {
+  Player batter = Batter();
+  makeMyPlayer(batter);
+
+  batter = ElbowGuard(batter);
+  batter = KneeGuard(batter);
+
+  makeMyPlayer(batter);
+
+  print("");
+
+  Player catcher = Catcher();
+  makeMyPlayer(catcher);
+
+  catcher = PelvicFloorGuard(catcher);
+  makeMyPlayer(catcher);
+}
 ```
