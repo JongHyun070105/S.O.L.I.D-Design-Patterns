@@ -19,7 +19,7 @@
 
 ![img](/img/abstract_factory.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 class Weapon:
@@ -84,4 +84,83 @@ warrior_armor = warrior.createArmor()
 
 warrior_weapon.display()
 warrior_armor.display()
+```
+
+## 다트 코드
+
+```dart
+abstract class Weapon {
+  void display();
+}
+
+abstract class Armor {
+  void display();
+}
+
+class ArcherWeapon implements Weapon {
+  @override
+  void display() {
+    print('아처의 무기: 활');
+  }
+}
+
+class ArcherArmor implements Armor {
+  @override
+  void display() {
+    print('아처의 방어구: 갑옷');
+  }
+}
+
+class WarriorWeapon implements Weapon {
+  @override
+  void display() {
+    print('전사의 무기: 검');
+  }
+}
+
+class WarriorArmor implements Armor {
+  @override
+  void display() {
+    print('전사의 방어구: 철갑옷');
+  }
+}
+
+abstract class ItemFactory {
+  void createWeapon();
+  void createArmor();
+}
+
+class ArcherFactory implements ItemFactory {
+  @override
+  ArcherArmor createArmor() {
+    return ArcherArmor();
+  }
+
+  @override
+  ArcherWeapon createWeapon() {
+    return ArcherWeapon();
+  }
+}
+
+class WarriorFactory implements ItemFactory {
+  @override
+  WarriorArmor createArmor() {
+    return WarriorArmor();
+  }
+
+  @override
+  WarriorWeapon createWeapon() {
+    return WarriorWeapon();
+  }
+}
+
+void main(List<String> args) {
+  final archer = ArcherFactory();
+
+  final archerWeapon = archer.createWeapon();
+  final archerArmor = archer.createArmor();
+
+  archerWeapon.display();
+  archerArmor.display();
+}
 ```
