@@ -59,7 +59,7 @@ car = factory.createCar()
 car.drive()
 ```
 
-## 다트로 다시 짜본 코드
+## 다트 코드
 
 ```dart
 abstract class ProductCar {
