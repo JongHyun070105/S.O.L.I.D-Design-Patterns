@@ -19,7 +19,8 @@
 
 ![img](/img/builder.png)
 
-## 코드
+## 파이썬 코드
+
 ```py
 from abc import ABC, abstractmethods
 
@@ -82,4 +83,84 @@ pitcher.info()
 
 batter = director.construct_batter()
 batter.info()
+```
+
+## 다트 코드
+
+```dart
+class Player {
+  String? name;
+  String? position;
+
+  void info() {
+    print("$name의 포지션은 $position");
+  }
+}
+
+abstract class Builder {
+  void reset();
+
+  Builder setName(String name);
+
+  Builder setPosition(String position);
+
+  Player getPlayer();
+}
+
+class PlayerBuilder implements Builder {
+  late Player _player;
+
+  PlayerBuilder() {
+    reset();
+  }
+
+  @override
+  Player getPlayer() {
+    final result = _player;
+    reset();
+    return result;
+  }
+
+  @override
+  void reset() {
+    _player = Player();
+  }
+
+  @override
+  PlayerBuilder setName(String name) {
+    _player.name = name;
+    return this;
+  }
+
+  @override
+  PlayerBuilder setPosition(String position) {
+    _player.position = position;
+    return this;
+  }
+}
+
+class Director {
+  Builder builder;
+
+  Director(this.builder);
+
+  Player constuctPitcher() {
+    return builder.setName("김민수").setPosition("투수").getPlayer();
+  }
+
+  Player constuctBatter() {
+    return builder.setName("김철수").setPosition("유격수").getPlayer();
+  }
+}
+
+void main(List<String> args) {
+  final builder = PlayerBuilder();
+  final director = Director(builder);
+
+  final pitcher = director.constuctPitcher();
+  final batter = director.constuctBatter();
+
+  pitcher.info();
+  batter.info();
+}
 ```
