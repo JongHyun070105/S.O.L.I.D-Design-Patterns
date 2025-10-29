@@ -19,7 +19,7 @@
 
 ![img](/img/factory.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 class ProductCar:
@@ -57,4 +57,61 @@ def get_factory(brand: str) -> CarFactory:
 factory = get_factory("현대")
 car = factory.createCar()
 car.drive()
+```
+
+## 다트로 다시 짜본 코드
+
+```dart
+abstract class ProductCar {
+  void drive();
+}
+
+class Kia implements ProductCar {
+  @override
+  void drive() {
+    print("기아차 출고 완료");
+  }
+}
+
+class Hyundai implements ProductCar {
+  @override
+  void drive() {
+    print("현대차 출고 완료");
+  }
+}
+
+abstract class CarFactory {
+  ProductCar createCar();
+}
+
+class KiaFactory implements CarFactory {
+  @override
+  Kia createCar() {
+    return Kia();
+  }
+}
+
+class HyundaiFacotry implements CarFactory {
+  @override
+  Hyundai createCar() {
+    return Hyundai();
+  }
+}
+
+CarFactory getFactory(String brand) {
+  if (brand == "기아") {
+    return KiaFactory();
+  } else if (brand == "현대") {
+    return HyundaiFacotry();
+  } else {
+    throw Exception("알 수 없는 브랜드입니다.");
+  }
+}
+
+void main(List<String> args) {
+  final factory = getFactory("기아");
+  final car = factory.createCar();
+
+  car.drive();
+}
 ```
