@@ -21,7 +21,7 @@
 
 ![img](/img/visitor.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 from abc import ABC, abstractmethod
@@ -109,4 +109,129 @@ print("=== 세금 포함 가격 계산 ===\n")
 tax_visitor = TaxVisitor()
 total_tax = sum(product.accept(tax_visitor) for product in products)
 print(f"\n총 세금 포함가: {total_tax}원")
+```
+
+## 다트 코드
+
+```dart
+abstract class Product {
+  String name;
+  int price;
+
+  Product(this.name, this.price);
+
+  double accept(PriceVisitor visitor);
+}
+
+class Book extends Product {
+  Book(super.name, super.price);
+
+  @override
+  double accept(PriceVisitor visitor) {
+    return visitor.visitBook(this);
+  }
+}
+
+class Electronic extends Product {
+  Electronic(super.name, super.price);
+
+  @override
+  double accept(PriceVisitor visitor) {
+    return visitor.visitElectronic(this);
+  }
+}
+
+class Food extends Product {
+  Food(super.name, super.price);
+
+  @override
+  double accept(PriceVisitor visitor) {
+    return visitor.visitFood(this);
+  }
+}
+
+abstract class PriceVisitor {
+  double visitBook(Book book);
+
+  double visitElectronic(Electronic electronic);
+
+  double visitFood(Food food);
+}
+
+class DiscountVisitor extends PriceVisitor {
+  @override
+  double visitBook(Book book) {
+    double discount = book.price * 0.1;
+    print("${book.name}: ${book.price}원 -> 10% 할인 = ${book.price - discount}원");
+    return book.price - discount;
+  }
+
+  @override
+  double visitElectronic(Electronic electronic) {
+    double discount = electronic.price * 0.15;
+    print(
+      "${electronic.name}: ${electronic.price}원 -> 15% 할인 = ${electronic.price - discount}원",
+    );
+    return electronic.price - discount;
+  }
+
+  @override
+  double visitFood(Food food) {
+    double discount = food.price * 0.05;
+    print("${food.name}: ${food.price}원 -> 5% 할인 = ${food.price - discount}원");
+    return food.price - discount;
+  }
+}
+
+class TaxVisitor extends PriceVisitor {
+  @override
+  double visitBook(Book book) {
+    double tax = book.price * 0.0;
+    print("${book.name}: ${book.price}원 + 세금 0% = ${book.price + tax}원");
+    return book.price + tax;
+  }
+
+  @override
+  double visitElectronic(Electronic electronic) {
+    double tax = electronic.price * 0.1;
+    print(
+      "${electronic.name}: ${electronic.price}원 + 세금 10% = ${electronic.price + tax}원",
+    );
+    return electronic.price + tax;
+  }
+
+  @override
+  double visitFood(Food food) {
+    double tax = food.price * 0.08;
+    print("${food.name}: ${food.price}원 + 세금 8% = ${food.price + tax}원");
+    return food.price + tax;
+  }
+}
+
+void main(List<String> args) {
+  List<Product> products = [
+    Book("디자인패턴", 30000),
+    Electronic("노트북", 1500000),
+    Food("햄버거", 8000),
+  ];
+
+  print("=== 할인 가격 계산 ===\n");
+  DiscountVisitor discountVisitor = DiscountVisitor();
+  final totalDiscount = products.fold<double>(
+    // fold: 리스트의 모든 요소를 순회하며 하나의 최종값을 만들어냄.
+    0.0,
+    (sum, product) => sum + product.accept(discountVisitor),
+  );
+  print("\n총 할인가: $totalDiscount원");
+
+  print("\n");
+
+  print("=== 세금 포함 가격 계산 ===");
+  TaxVisitor taxVisitor = TaxVisitor();
+  final totalTax = products.fold<double>(
+    0.0,
+    (sum, product) => sum + product.accept(taxVisitor),
+  );
+  print("\n총 세금 포함가: $totalTax");
+}
 ```
