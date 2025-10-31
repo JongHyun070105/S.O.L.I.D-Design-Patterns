@@ -22,7 +22,7 @@
 
 ![img](/img/observer.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 from abc import ABC, abstractmethod
@@ -77,4 +77,71 @@ print("\n" + "-" * 50)
 channel.unsubscribe(user2)
 
 channel.upload_video("파이썬 고급 테크닉 10가지")
+```
+
+## 다트 코드
+
+```dart
+abstract class Observer {
+  void upadate(String channelName, String videoTitle);
+}
+
+class Subscriber extends Observer {
+  String name;
+
+  Subscriber(this.name);
+
+  @override
+  void upadate(String channelName, String videoTitle) {
+    print("[알림] $name님, $channelName 채널에 새 영상이 올라왔습니다. $videoTitle");
+  }
+}
+
+class YoutubeChannel {
+  String channelName;
+  List<Subscriber> subscribers = [];
+
+  YoutubeChannel(this.channelName);
+
+  void subscribe(Subscriber subscriber) {
+    subscribers.add(subscriber);
+    print("${subscriber.name}님이 $channelName 채널을 구독했습니다.");
+  }
+
+  void unsubscribe(Subscriber subscriber) {
+    subscribers.remove(subscriber);
+    print("${subscriber.name}님이 $channelName 채널을 구독 취소했습니다.");
+  }
+
+  void uploadVideo(String videoTitle) {
+    print("\n[$channelName] 새 영상 업로드: $videoTitle\n");
+    notifySubscribers(videoTitle);
+  }
+
+  void notifySubscribers(String videoTitle) {
+    for (Subscriber subscriber in subscribers) {
+      subscriber.upadate(channelName, videoTitle);
+    }
+  }
+}
+
+void main(List<String> args) {
+  YoutubeChannel channel = YoutubeChannel("코딩 마스터");
+
+  Subscriber user1 = Subscriber("철수");
+  Subscriber user2 = Subscriber("영희");
+  Subscriber user3 = Subscriber("민수");
+
+  channel.subscribe(user1);
+  channel.subscribe(user2);
+  channel.subscribe(user3);
+
+  channel.uploadVideo("디자인 패턴 완벽 가이드");
+
+  print("\n");
+
+  channel.unsubscribe(user2);
+
+  channel.uploadVideo("다트 고급 강의");
+}
 ```
