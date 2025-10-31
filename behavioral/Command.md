@@ -20,7 +20,7 @@
 
 ![img](/img/command.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 from abc import ABC, abstractmethod
@@ -113,4 +113,121 @@ print(editor)
 
 manager.redo()
 print(editor)
+```
+
+## 다트 코드
+
+```dart
+abstract class Command {
+  void execute();
+
+  void undo();
+}
+
+class TextEditor {
+  String text = "";
+
+  void write(String content) {
+    text += content;
+  }
+
+  String delete(int count) {
+    // substring - 시작인덱스부터 끝인덱스 전까지 문자열을 잘라냄
+    final removed = text.substring(text.length - count);
+    text = text.substring(0, text.length - count);
+
+    return removed;
+  }
+
+  @override
+  String toString() {
+    return text;
+  }
+}
+
+class WriteCommand extends Command {
+  TextEditor editor;
+  String content;
+
+  WriteCommand(this.editor, this.content);
+
+  @override
+  void execute() {
+    editor.write(content);
+  }
+
+  @override
+  void undo() {
+    editor.delete(content.length);
+  }
+}
+
+class DeleteCommand extends Command {
+  TextEditor editor;
+  int count;
+  String deletedText = "";
+
+  DeleteCommand(this.editor, this.count);
+
+  @override
+  void execute() {
+    deletedText = editor.delete(count);
+  }
+
+  @override
+  void undo() {
+    editor.write(deletedText);
+  }
+}
+
+class CommandManager {
+  List<Command> history = [];
+  List<Command> redoStack = [];
+  late Command command;
+
+  void executeCommand(Command command) {
+    command.execute();
+    history.add(command); // dart에선 append 말고 add 사용
+    redoStack.clear();
+  }
+
+  void undo() {
+    if (history.isEmpty) {
+      // dart에선 isEmpty로 비어있는지 확인
+      return;
+    }
+    command = history.removeLast(); // dart에선 pop 대신 removeLast 사용
+    command.undo();
+    redoStack.add(command);
+  }
+
+  void redo() {
+    if (redoStack.isEmpty) {
+      return;
+    }
+    command = redoStack.removeLast();
+    command.execute();
+    history.add(command);
+  }
+}
+
+void main(List<String> args) {
+  final editor = TextEditor();
+  final manager = CommandManager();
+
+  manager.executeCommand(WriteCommand(editor, "Hello "));
+  manager.executeCommand(WriteCommand(editor, "World"));
+
+  print(editor.toString());
+
+  manager.undo();
+  manager.undo();
+  print(editor.toString());
+
+  manager.redo();
+  print(editor.toString());
+
+  manager.redo();
+  print(editor.toString());
+}
 ```
