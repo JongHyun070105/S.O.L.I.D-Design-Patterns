@@ -19,7 +19,7 @@
 
 ![img](/img/proxy.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 import time
@@ -72,4 +72,73 @@ proxy = APIServiceProxy(real_service)
 
 print(proxy.fetch_data("/users"))
 print(proxy.fetch_data("/posts"))
+```
+
+## 다트 코드
+
+```dart
+import 'dart:async';
+import 'dart:math';
+
+abstract class ServiceInterface {
+  Future<String> fetchData(String endpoint);
+}
+
+class APIService extends ServiceInterface {
+  @override
+  Future<String> fetchData(String endpoint) async {
+    print("API 호출 $endpoint");
+    if (Random().nextDouble() < 0.3) {
+      throw Exception("API 요청 실패");
+    }
+    return "데이터 from $endpoint";
+  }
+}
+
+class APIServiceProxy extends ServiceInterface {
+  final APIService realService;
+  final int retry = 3;
+  final int rateLimit = 3;
+  int _lastCall = 0;
+
+  APIServiceProxy(this.realService);
+
+  @override
+  Future<String> fetchData(String endpoint) async {
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
+    final rateLimitMillis = rateLimit * 1000;
+
+    if (currentTime - _lastCall < rateLimitMillis) {
+      final waitTime = rateLimitMillis - (currentTime - _lastCall);
+      print("호출 제한: ${waitTime / 1000}초 대기");
+      await Future.delayed(Duration(milliseconds: waitTime));
+    }
+
+    _lastCall = DateTime.now().millisecondsSinceEpoch;
+
+    for (var attempt = 1; attempt <= retry; attempt++) {
+      try {
+        print("[시도 $attempt] Proxy가 APIService에 요청 위임");
+        var result = await realService.fetchData(endpoint);
+        print("API 호출 성공");
+        return result;
+      } catch (e) {
+        print("실패: $e");
+        if (attempt == retry) {
+          throw Exception("모든 재시도 실패");
+        }
+        print("재시도중..");
+      }
+    }
+    throw Exception('실패');
+  }
+}
+
+Future<void> main(List<String> args) async {
+  final realService = APIService();
+  final proxy = APIServiceProxy(realService);
+
+  print(await proxy.fetchData("/users"));
+  print(await proxy.fetchData("/posts"));
+}
 ```
