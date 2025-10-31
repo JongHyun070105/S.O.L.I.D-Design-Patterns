@@ -21,7 +21,7 @@
 
 ![img](/img/memento.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 class SettingsMemento:
@@ -141,4 +141,147 @@ print("\n" + "="*50)
 print("두 번째 저장으로 되돌리기:")
 settings_manager.restore_settings(save2)
 settings_manager.show_current_settings()
+```
+
+## 다트 코드
+
+```dart
+class SettingsMemento {
+  AudioSettings audioSettings;
+  DisplaySettings displaySettings;
+  AppSettings appSettings;
+
+  SettingsMemento(this.audioSettings, this.displaySettings, this.appSettings);
+
+  @override
+  String toString() {
+    return "설정[오디오: $audioSettings), 디스플레이: $displaySettings, 앱: $appSettings]";
+  }
+}
+
+class AudioSettings {
+  int volume = 50;
+
+  void setVolume(int volume) {
+    this.volume = volume;
+    print("볼륨이 $volume%로 변경되었습니다.");
+  }
+
+  @override
+  String toString() {
+    return "볼륨: $volume%";
+  }
+}
+
+class DisplaySettings {
+  int brightness = 80;
+  String theme = "Light";
+
+  void setBrightness(int brightness) {
+    this.brightness = brightness;
+    print("밝기가 $brightness%로 변경되었습니다.");
+  }
+
+  void setTheme(String theme) {
+    this.theme = theme;
+    print("테마가 $theme로 변경되었습니다.");
+  }
+
+  @override
+  String toString() {
+    return "밝기: $brightness%, 테마: $theme";
+  }
+}
+
+class AppSettings {
+  String language = "한국어";
+  bool notifications = true;
+
+  void setLanguage(String language) {
+    this.language = language;
+    print("언어가 ${this.language} 변경되었습니다.");
+  }
+
+  void toggleNotifications() {
+    notifications = !notifications;
+    String status = notifications ? '켜짐' : '꺼짐';
+    print("알림이 $status}로 변경되었습니다.");
+  }
+
+  @override
+  String toString() {
+    return "언어: $language, 알림: ${notifications ? '켜짐' : '꺼짐'}";
+  }
+}
+
+class SettingsManager {
+  AudioSettings audio = AudioSettings();
+  DisplaySettings display = DisplaySettings();
+  AppSettings app = AppSettings();
+
+  void showCurrentSettings() {
+    print('\n현재 설정: ');
+    print('$audio');
+    print('$display');
+    print('$app');
+  }
+
+  SettingsMemento saveSettings() {
+    print("설정이 저장되엇습니다.");
+
+    AudioSettings audioCopy = AudioSettings();
+    audioCopy.volume = audio.volume;
+
+    DisplaySettings displayCopy = DisplaySettings();
+    displayCopy.brightness = display.brightness;
+    displayCopy.theme = display.theme;
+
+    AppSettings appCopy = AppSettings();
+    appCopy.language = app.language;
+    appCopy.notifications = app.notifications;
+
+    return SettingsMemento(audioCopy, displayCopy, appCopy);
+  }
+
+  void restoreSettings(SettingsMemento memento) {
+    audio.volume = memento.audioSettings.volume;
+    display.brightness = memento.displaySettings.brightness;
+    display.theme = memento.displaySettings.theme;
+    app.language = memento.appSettings.language;
+    app.notifications = memento.appSettings.notifications;
+
+    print("설정이 복원되었습니다: $memento");
+  }
+}
+
+void main(List<String> args) {
+  SettingsManager settingManager = SettingsManager();
+
+  print("앱 설정 변경 및 저장 테스트 \n");
+
+  settingManager.showCurrentSettings();
+  final save1 = settingManager.saveSettings();
+
+  settingManager.audio.setVolume(75);
+  settingManager.display.setBrightness(90);
+  settingManager.display.setTheme("다크");
+  settingManager.showCurrentSettings();
+
+  final save2 = settingManager.saveSettings();
+
+  print("\n 더 많은 설정 변경...");
+  settingManager.audio.setVolume(10);
+  settingManager.app.setLanguage("English");
+  settingManager.app.toggleNotifications();
+  settingManager.showCurrentSettings();
+
+  print(" \n =====");
+  print("첫번째 저장으로 돌아가기: ");
+  settingManager.restoreSettings(save1);
+
+  print("\n =====");
+  print("두번째 저장으로 돌아가기: ");
+  settingManager.restoreSettings(save2);
+  settingManager.showCurrentSettings();
+}
 ```
