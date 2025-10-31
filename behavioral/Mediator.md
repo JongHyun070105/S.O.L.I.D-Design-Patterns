@@ -21,7 +21,7 @@
 
 ![img](/img/mediator.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 class ChatRoom:
@@ -71,4 +71,63 @@ user2.send("반갑습니다~ 잘 부탁드려요!")
 print("\n" + "-" * 50)
 
 user3.send("다들 반가워요 ㅎㅎ")
+```
+
+## 다트 코드
+
+```dart
+
+class ChatRoom {
+  String name;
+  List<User> users = [];
+
+  ChatRoom(this.name);
+
+  void addUser(User user) {
+    users.add(user);
+    print("${user.name}님이 '$name' 채팅방에 입장했습니다.");
+  }
+
+  void sendMessage(String message, User sender) {
+    print("\n [$name] ${sender.name}: $message");
+    for (User user in users) {
+      if (user != sender) {
+        user.receive(message, sender);
+      }
+    }
+  }
+}
+
+class User {
+  String name;
+  ChatRoom chatroom;
+
+  User(this.name, this.chatroom);
+
+  void send(String message) {
+    chatroom.sendMessage(message, this); // this == self
+  }
+
+  void receive(String message, User sender) {
+    print(" -> $name님이 받음");
+  }
+}
+
+void main(List<String> args) {
+  final chatroom = ChatRoom("개발자 모임");
+
+  final user1 = User("동균", chatroom);
+  final user2 = User("태영", chatroom);
+  final user3 = User("종현", chatroom);
+
+  chatroom.addUser(user1);
+  chatroom.addUser(user2);
+  chatroom.addUser(user3);
+
+  user1.send("안녕하세요!");
+
+  user2.send("반가워요~");
+
+  user3.send("반갑습니다!");
+}
 ```
