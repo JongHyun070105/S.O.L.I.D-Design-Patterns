@@ -22,7 +22,7 @@
 
 ![img](/img/template_method.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 class BasicUniform:
@@ -81,4 +81,92 @@ print("---------------------")
 
 lgFan = LgUniform()
 lgFan.makeUniform()
+```
+
+## 다트 코드
+
+```dart
+class BasicUniform {
+  void makeUniform() {
+    addTeam();
+    addName();
+    addBackNum();
+    addSize();
+  }
+
+  void addTeam() {
+    print("팀: 삼성 라이온즈");
+  }
+
+  void addName() {
+    print("이름: 오승환");
+  }
+
+  void addBackNum() {
+    print("등번호 : 21");
+  }
+
+  void addSize() {}
+}
+
+class JongHyunUniform extends BasicUniform {
+  @override
+  void addSize() {
+    print("사이즈: 110");
+  }
+}
+
+class LGUniform extends BasicUniform {
+  @override
+  void addTeam() {
+    print("팀: LG 트윈스");
+  }
+
+  @override
+  void addName() {
+    print("이름: 이병규");
+  }
+
+  @override
+  void addBackNum() {
+    print("등번호: 99");
+  }
+
+  @override
+  void addSize() {
+    print("사이즈: 95");
+  }
+}
+
+class KIAUniform extends BasicUniform {
+  @override
+  void addTeam() {
+    print("팀: 기아 타이거즈");
+  }
+
+  @override
+  void addName() {
+    print("이름: 이종범");
+  }
+
+  @override
+  void addBackNum() {
+    print("등번호: 7");
+  }
+
+  @override
+  void addSize() {
+    print("사이즈: 100");
+  }
+}
+
+void main(List<String> args) {
+  JongHyunUniform jonghyun = JongHyunUniform();
+  jonghyun.makeUniform();
+
+  print("--------");
+
+  LGUniform lgFan = LGUniform();
+  lgFan.makeUniform();
+}
 ```
