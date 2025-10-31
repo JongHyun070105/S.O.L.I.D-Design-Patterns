@@ -110,7 +110,7 @@ class APIServiceProxy extends ServiceInterface {
 
     if (currentTime - _lastCall < rateLimitMillis) {
       final waitTime = rateLimitMillis - (currentTime - _lastCall);
-      print("호출 제한: ${waitTime / 1000}초 대기");
+      print("호출 제한: ${(waitTime / 1000).toStringAsFixed(0)}초 대기");
       await Future.delayed(Duration(milliseconds: waitTime));
     }
 
