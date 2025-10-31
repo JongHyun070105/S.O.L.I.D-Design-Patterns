@@ -20,7 +20,7 @@
 
 ![img](/img/chain_of_responsibility.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 from abc import ABC, abstractmethod
@@ -120,4 +120,110 @@ class ChainPatternDemo:
 
 demo = ChainPatternDemo()
 demo.main()
+```
+
+## 다트 코드
+
+```dart
+class SupportTicket {
+  var level;
+  var description;
+  String priority = "normal";
+
+  SupportTicket(this.level, this.description);
+}
+
+abstract class SupportHandler {
+  static const int LEVEL_1 = 1;
+  static const int LEVEL_2 = 2;
+  static const int LEVEL_3 = 3;
+
+  int level = 0;
+  SupportHandler? nextHandler;
+
+  SupportHandler setNext(SupportHandler handler) {
+    nextHandler = handler;
+    return handler;
+  }
+
+  bool canHandle(SupportTicket ticket);
+
+  void process(SupportTicket ticket);
+
+  void handle(SupportTicket ticket) {
+    if (canHandle(ticket)) {
+      process(ticket);
+    } else if (nextHandler != null) {
+      print(
+        " -> $runtimeType 처리할 수 없어 다음 레벨로 전달합니다.",
+      ); // runtimeType을 사용하면 현재 클래스의 이름을 출력할 수 있다.
+      nextHandler!.handle(ticket);
+    } else {
+      print('어떤 팁도 이 문의를 처리할 수 없습니다.');
+    }
+  }
+}
+
+class Level1Support extends SupportHandler {
+  @override
+  bool canHandle(SupportTicket ticket) {
+    return ticket.level == SupportHandler.LEVEL_1;
+  }
+
+  @override
+  void process(SupportTicket ticket) {
+    print("Level 1 Support에서 처리: ${ticket.description}");
+    print("    ->  일반 상담원이 FAQ를 안내했습니다.");
+  }
+}
+
+class Level2Support extends SupportHandler {
+  @override
+  bool canHandle(SupportTicket ticket) {
+    return ticket.level == SupportHandler.LEVEL_2;
+  }
+
+  @override
+  void process(SupportTicket ticket) {
+    print("Level 2 Support에서 처리: ${ticket.description}");
+    print("    ->  기술 지원팀이 문제를 해결했습니다.");
+  }
+}
+
+class Level3Support extends SupportHandler {
+  @override
+  bool canHandle(SupportTicket ticket) {
+    return ticket.level == SupportHandler.LEVEL_3;
+  }
+
+  @override
+  void process(SupportTicket ticket) {
+    print("Level 3 Support에서 처리: ${ticket.description}");
+    print("    ->  전문가가 심층 분석을 진행했습니다.");
+  }
+}
+
+void main(List<String> args) {
+  final level1 = Level1Support();
+  final level2 = Level2Support();
+  final level3 = Level3Support();
+
+  level1.setNext(level2).setNext(level3);
+
+  List tickets = [
+    SupportTicket(SupportHandler.LEVEL_1, "비밀번호를 어떻게 재설정하나요?"),
+    SupportTicket(SupportHandler.LEVEL_2, "앱이 계속 크래시가 발생합니다."),
+    SupportTicket(SupportHandler.LEVEL_3, "서버 아키텍처 마이그레이션 문의"),
+    SupportTicket(4, "처리할 수 없는 레벨의 요청"),
+  ];
+
+  print("=== 고객 지원 티켓 시스템 ===");
+  for (var i = 0; i < tickets.length; i++) {
+    final ticket = tickets[i];
+
+    print("[티켓 ${(i + 1)}] ${ticket.description}");
+    level1.handle(ticket);
+    print("");
+  }
+}
 ```
