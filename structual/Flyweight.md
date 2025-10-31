@@ -20,7 +20,7 @@
 
 ![img](/img/flyweight.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 class CharacterStyle:
@@ -41,8 +41,8 @@ class StyleFactory:
 
 class Character:
     def __init__(self, char, style):
-        self.char = char          
-        self.style = style        
+        self.char = char
+        self.style = style
 
     def render(self):
         print(f"{self.char} [폰트:{self.style.font}, 크기:{self.style.size}, 색:{self.style.color}]")
@@ -61,4 +61,53 @@ chars = [
 
 for c in chars:
     c.render()
+```
+
+## 다트 코드
+
+```dart
+class CharacterStyle {
+  final String font;
+  final int size;
+  final String color;
+
+  const CharacterStyle(this.font, this.size, this.color);
+}
+
+class StyleFactory {
+  static final Map<(String, int, String), CharacterStyle> _styles = {};
+
+  static CharacterStyle getStyle(String font, int size, String color) {
+    final key = (font, size, color);
+
+    // putIfAbsent: Map클래스에 있는 메서드 - 특정 키에 해당하는 값이 맵에 없는 경우메나 값을 추가하는 메서드
+    return _styles.putIfAbsent(key, () => CharacterStyle(font, size, color));
+  }
+}
+
+class Character {
+  final String char;
+  final CharacterStyle style;
+
+  Character(this.char, this.style);
+
+  void render() {
+    print('$char [폰트: ${style.font}, 크기: ${style.size}, 색: ${style.color}]');
+  }
+}
+
+void main(List<String> args) {
+  final chars = [
+    Character('H', StyleFactory.getStyle('Arial', 12, 'black')),
+    Character('E', StyleFactory.getStyle('Arial', 12, 'black')),
+    Character('L', StyleFactory.getStyle('Arial', 12, 'black')),
+    Character('L', StyleFactory.getStyle('Arial', 12, 'black')),
+    Character('O', StyleFactory.getStyle('Arial', 12, 'black')),
+    Character('!', StyleFactory.getStyle('Arial', 12, 'red')),
+  ];
+
+  for (final c in chars) {
+    c.render();
+  }
+}
 ```
