@@ -21,7 +21,7 @@
 
 ![img](/img/strategy.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 from abc import ABC, abstractmethod
@@ -67,4 +67,73 @@ else:
 
 context = FileCompressor(strategy)
 context.compress(filename)
+```
+
+## 다트 코드
+
+```dart
+import 'dart:io';
+
+abstract class Compression {
+  void compress(String fileName);
+}
+
+class Zip extends Compression {
+  @override
+  void compress(String fileName) {
+    print("$fileName.zip으로 압축했습니다.");
+  }
+}
+
+class Rar extends Compression {
+  @override
+  void compress(String fileName) {
+    print("$fileName.rar로 압축했습니다.");
+  }
+}
+
+class Tar extends Compression {
+  @override
+  void compress(String fileName) {
+    print("$fileName.tar로 압축했습니다.");
+  }
+}
+
+class FileCompressor {
+  Compression strategy;
+
+  FileCompressor(this.strategy);
+
+  void setStrategy(Compression strategy) {
+    this.strategy = strategy;
+  }
+
+  void compress(String fileName) {
+    strategy.compress(fileName);
+  }
+}
+
+void main(List<String> args) {
+  // dart에서 입력은 stdin.readLineSync() / import 'dart:io'가 필요함
+  stdout.write('압축 방식을 입력해주세요 (zip / rar / tar): ');
+  String compressStr = stdin.readLineSync().toString();
+
+  stdout.write('파일명을 입력해주세요: ');
+  String fileNameStr = stdin.readLineSync().toString();
+
+  Compression? strategy;
+
+  if (compressStr == "zip") {
+    strategy = Zip();
+  } else if (compressStr == "rar") {
+    strategy = Rar();
+  } else if (compressStr == "tar") {
+    strategy = Tar();
+  } else {
+    return print("지원하지 않는 압축형식입니다. $compressStr");
+  }
+
+  FileCompressor context = FileCompressor(strategy);
+  context.compress(fileNameStr);
+}
 ```
