@@ -20,7 +20,7 @@
 
 ![img](/img/iterator.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 from abc import ABC, abstractmethod
@@ -86,4 +86,78 @@ while iterator.has_next():
     track_number += 1
 
 print("\n재생 완료! 🎧")
+```
+
+## 다트 코드
+
+```dart
+class Song {
+  String title;
+  String artist;
+
+  Song(this.title, this.artist);
+
+  @override
+  String toString() {
+    return "$title - $artist";
+  }
+}
+
+abstract class Iterator {
+  bool hasNext();
+
+  Song next();
+}
+
+class PlaylistIterator extends Iterator {
+  List<Song> songs;
+  int position = 0;
+
+  PlaylistIterator(this.songs);
+
+  @override
+  bool hasNext() {
+    return position < songs.length;
+  }
+
+  @override
+  Song next() {
+    final song = songs[position];
+    position += 1;
+    return song;
+  }
+}
+
+class Playlist {
+  String name;
+  List<Song> songs = [];
+
+  Playlist(this.name);
+
+  void addSong(Song song) {
+    songs.add(song);
+  }
+
+  PlaylistIterator createIterator() {
+    return PlaylistIterator(songs);
+  }
+}
+
+void main(List<String> args) {
+  final playlist = Playlist("내가 좋아하는 노래");
+
+  playlist.addSong(Song("Dynamite", "BTS"));
+
+  print("${playlist.name} 재생 중...\n");
+
+  final iterator = playlist.createIterator();
+
+  int trackNumber = 1;
+  while (iterator.hasNext()) {
+    Song song = iterator.next();
+    print("$trackNumber. ♪ $song");
+    trackNumber += 1;
+  }
+  print("\n재생 완료!");
+}
 ```
