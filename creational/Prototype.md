@@ -20,7 +20,7 @@
 
 ![img](/img/prototype.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 import copy
@@ -66,4 +66,64 @@ you.info()
 yourMom = you.clone()
 yourMom.taste = "초코"
 yourMom.info()
+```
+
+## 다트 코드
+
+```dart
+abstract class PrototypeIceCream {
+  String taste;
+  String decorate;
+
+  PrototypeIceCream(this.taste, this.decorate);
+
+  String info() {
+    return "$taste맛에 $decorate 추가";
+  }
+
+  PrototypeIceCream clone();
+}
+
+class MyIceCream extends PrototypeIceCream {
+  MyIceCream(super.taste, super.decorate, this.cone);
+  String cone;
+
+  @override
+  String info() {
+    return "${super.info()}, $cone에 담음";
+  }
+
+  @override
+  MyIceCream clone() {
+    // python처럼 deepcopy가 없어서 자신의 타입으로 새 인스턴스를 만들어 반환함
+    return MyIceCream(taste, decorate, cone);
+  }
+}
+
+class YourIceCream extends PrototypeIceCream {
+  YourIceCream(super.taste, super.decorate);
+
+  @override
+  YourIceCream clone() {
+    return YourIceCream(taste, decorate);
+  }
+}
+
+void main(List<String> args) {
+  final me = MyIceCream("초코", "별사탕", "컵");
+  print(me.info());
+
+  final myMom = me.clone();
+  myMom.cone = "와플콘";
+  print(myMom.info());
+
+  print('-------------');
+
+  final you = YourIceCream("바닐라", "딸기");
+  print(you.info());
+
+  final yourMom = you.clone();
+  yourMom.taste = "초코";
+  print(yourMom.info());
+}
 ```
