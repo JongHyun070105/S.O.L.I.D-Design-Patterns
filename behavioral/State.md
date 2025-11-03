@@ -21,7 +21,7 @@
 
 ![img](/img/state.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 class Door:
@@ -107,4 +107,122 @@ myRoom.lock()
 myRoom.close()
 myRoom.lock()
 myRoom.unlock()
+```
+
+## 다트 코드
+
+```dart
+class Door {
+  State state = ClosedState();
+
+  void setState(State newState) {
+    state = newState;
+  }
+
+  void open() {
+    state.open(this);
+  }
+
+  void close() {
+    state.close(this);
+  }
+
+  void lock() {
+    state.lock(this);
+  }
+
+  void unlock() {
+    state.unlock(this);
+  }
+}
+
+abstract class State {
+  void open(Door door);
+
+  void close(Door door);
+
+  void lock(Door door);
+
+  void unlock(Door door);
+}
+
+class OpenState extends State {
+  @override
+  void close(Door door) {
+    print("문이 닫힙니다.");
+    door.setState(ClosedState());
+  }
+
+  @override
+  void lock(Door door) {
+    print("문이 열려 있어 잠글 수 없습니다.");
+  }
+
+  @override
+  void open(Door door) {
+    print("문이 이미 열려있습니다.");
+  }
+
+  @override
+  void unlock(Door door) {
+    print("문이 열려 있어 잠금 상태가 아닙니다.");
+  }
+}
+
+class ClosedState extends State {
+  @override
+  void close(Door door) {
+    print("문이 이미 닫혀있습니다.");
+  }
+
+  @override
+  void lock(Door door) {
+    print("문이 잠깁니다.");
+    door.setState(LockedState());
+  }
+
+  @override
+  void open(Door door) {
+    print("문이 열립니다.");
+    door.setState(OpenState());
+  }
+
+  @override
+  void unlock(Door door) {
+    print("잠금해제 합니다.");
+  }
+}
+
+class LockedState extends State {
+  @override
+  void close(Door door) {
+    print("문이 닫혀있습니다.");
+  }
+
+  @override
+  void lock(Door door) {
+    print("문이 이미 잠겨있습니다.");
+  }
+
+  @override
+  void open(Door door) {
+    print("문이 잠겨있어 열 수 없습니다.");
+  }
+
+  @override
+  void unlock(Door door) {
+    print("문이 잠금해제 됩니다.");
+    door.setState(OpenState());
+  }
+}
+
+void main(List<String> args) {
+  Door myRoom = Door();
+
+  myRoom.open();
+  myRoom.lock();
+  myRoom.close();
+  myRoom.lock();
+  myRoom.unlock();
+}
 ```
