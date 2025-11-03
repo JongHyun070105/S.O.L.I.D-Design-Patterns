@@ -18,13 +18,9 @@
 
 ## 클래스 다이어그램
 
-<img
-  src="/Users/macintosh/Design_Pattern/img/singleton.png"
-  width="400"
-  height="300"
-/>
+![img](/img/singleton.png)
 
-## 코드
+## 파이썬 코드
 
 ```py
 class DB:
@@ -47,4 +43,41 @@ if db1 == db2:
   print("기존 DB에 연결되었습니다.")
 else:
   print("다른 DB에 연결되었습니다.")
+```
+
+## 다트 코드
+
+```dart
+class DB {
+  // 싱글톤 인스턴스를 저장할 정적 변수
+  static DB? _instance;
+
+  late String connection;
+
+  DB._internal() {
+    // 최초 인스턴스 생성 시 단 한번만 호출 됨
+    print("DB를 생성합니다.");
+    connection = "DB 연결중";
+  }
+
+  factory DB() {
+    // _instance가 null이면 private 생성자를 통해 인스턴스 생성
+    _instance ??= DB._internal();
+    return _instance!; // 있으면 이미 존재하는 인스턴스 반환
+  }
+}
+
+void main(List<String> args) {
+  var db1 = DB();
+  var db2 = DB();
+
+  print(db1.connection);
+  print(db2.connection);
+
+  if (identical(db1, db2)) {
+    print("기존 DB에 연결되었습니다.");
+  } else {
+    print("다른 DB에 연결되었습니다.");
+  }
+}
 ```
